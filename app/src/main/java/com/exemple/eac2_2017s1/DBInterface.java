@@ -83,7 +83,7 @@ public class DBInterface {
     public Cursor getAll(){
         return db.query(TABLE_NAME, new String[] {TITULO, DESCRIPCION, ENLACE, AUTOR, FECHA, CATEGORIA, IMAGEN}, null, null, null, null, null);
     }
-
+//TODO Necesario?
     public void dropAndRecreateTable(){
         open();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
