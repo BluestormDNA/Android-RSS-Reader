@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.exemple.eac2_2017s1.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/action_actualizar"
+        android:icon="@android:drawable/ic_popup_sync"
+        android:title="@string/buscar"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_buscar"
+        android:icon="?android:attr/actionModeWebSearchDrawable"
+        android:title="@string/actualizar"
+        app:showAsAction="ifRoom" />
 </menu>

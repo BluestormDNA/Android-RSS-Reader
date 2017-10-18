@@ -2,12 +2,10 @@ package com.exemple.eac2_2017s1;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.print.PrintDocumentAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,8 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import static com.exemple.eac2_2017s1.XmlParser.*;
+import static com.exemple.eac2_2017s1.XmlParser.Entrada;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -95,7 +92,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_actualizar) {
+            actualitzaEstatXarxa();
+            cargaNoticias();
+            return true;
+        } else if (id == R.id.action_buscar) {
+            Toast.makeText(this, "uscar Falta Implementar", Toast.LENGTH_LONG).show();
             return true;
         }
 
@@ -103,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void actualitzaEstatXarxa() {
+        connectat3G = false;
+        connectatWifi = false;
         //Obtenim un gestor de les connexions de xarxa
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         //Obtenim l'estat de la xarxa
@@ -115,8 +119,6 @@ public class MainActivity extends AppCompatActivity {
                 // connected to the mobile provider's data plan
                 connectat3G = activeNetwork.isConnected();
             }
-        } else {
-            // not connected to the internet
         }
     }
 
@@ -133,44 +135,6 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setVisibility(View.VISIBLE);
         }
     }
-
-    //Implementació d'AsyncTask per descarregar el feed XML de stackoverflow.com
-    private class DownloadTask extends AsyncTask<String, Void, List<Entrada>> {
-        @Override
-
-        //El que s'executar en el background
-        protected List<Entrada> doInBackground(String... urls) {
-            List<Entrada> lista = null;
-            try {
-                //Carreguem l'XML
-                lista = carregaXMLdelaXarxa(urls[0]);
-                //insertamos en la db
-                dbInsertAll(lista);
-                //descargamos las imagenes
-                downloadImages(lista);
-            } catch (IOException | XmlPullParserException e) {
-                //Error
-            }
-            return lista;
-        }
-
-
-        @Override
-        //Una vegada descarregada la informació XML i convertida a HTML l'enllacem al WebView
-        protected void onPostExecute(List<Entrada> lista) {
-            adapter.setList(lista);
-            adapter.notifyDataSetChanged();
-            progressBar.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-        }
-
-
-        //Mostra la cadena HTML en la UI a travs del WebView
-        //WebView myWebView = (WebView) findViewById(R.id.webView1);
-        //myWebView.loadData(result, "text/html", null);
-    }
-
-
 
     private void downloadImages(List<Entrada> result) {
         for (Entrada entrada : result) {
@@ -310,5 +274,47 @@ public class MainActivity extends AppCompatActivity {
             entradas.add(new Entrada(titulo, enlace, autor, descripcion, fecha, categoria, imagen));
         }
         return entradas;
+    }
+
+    //Implementació d'AsyncTask per descarregar el feed XML de stackoverflow.com
+    private class DownloadTask extends AsyncTask<String, Void, List<Entrada>> {
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        //El que s'executar en el background
+        protected List<Entrada> doInBackground(String... urls) {
+            List<Entrada> lista = null;
+            try {
+                //Carreguem l'XML
+                lista = carregaXMLdelaXarxa(urls[0]);
+                //insertamos en la db
+                dbInsertAll(lista);
+                //descargamos las imagenes
+                downloadImages(lista);
+            } catch (IOException | XmlPullParserException e) {
+                //Error
+            }
+            return lista;
+        }
+
+
+        @Override
+        //Una vegada descarregada la informació XML i convertida a HTML l'enllacem al WebView
+        protected void onPostExecute(List<Entrada> lista) {
+            adapter.setList(lista);
+            adapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+
+
+        //Mostra la cadena HTML en la UI a travs del WebView
+        //WebView myWebView = (WebView) findViewById(R.id.webView1);
+        //myWebView.loadData(result, "text/html", null);
     }
 }
