@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ElMeuViewHolder> {
     //Creem el constructor
     public Adaptador(Context context) {
         this.context = context;
-        this.lista= lista;
     }
     //Crea noves files (l'invoca el layout manager). Aquí fem referència al layout fila.xml
     @Override
@@ -64,7 +64,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ElMeuViewHolder> {
     }
 
     //Definim el nostre ViewHolder, és a dir, un element de la llista en qüestió
-    public static class ElMeuViewHolder extends RecyclerView.ViewHolder {
+    public class ElMeuViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         //Només conté un TextView
         protected ImageView imageView;
         protected TextView vTitle;
@@ -73,7 +73,24 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ElMeuViewHolder> {
             //El referenciem al layout
             imageView = (ImageView) v.findViewById(R.id.imageView);
             vTitle = (TextView) v.findViewById(R.id.title);
+
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(context,"algo", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int posicion = getAdapterPosition();
+            lista.remove(posicion);
+            notifyItemRemoved(posicion);
+            return true;
+        }
+
     }
 
 }
