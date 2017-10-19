@@ -1,9 +1,6 @@
 package com.exemple.eac2_2017s1;
 
-import android.content.Context;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -69,12 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         //DB
         db = new DBInterface(this);
-        // PARSER
-        //Mirem si hi ha connexió de xarxa
-        actualitzaEstatXarxa();
+
         //Carreguem les noticies a un fil independent fent servir AsyncTask
         cargaNoticias();
-        //Després de cada modificació a la font de les dades, hem de notificar-ho a l'adaptador
     }
 
     @Override
@@ -91,41 +85,23 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //Si se presiona el boton actualizar actualiza el estado de la red y carga las noticias
         if (id == R.id.action_actualizar) {
-            actualitzaEstatXarxa();
             cargaNoticias();
             return true;
+            //Si se presiona la el boton buscar filtra la lista
         } else if (id == R.id.action_buscar) {
-            Toast.makeText(this, "uscar Falta Implementar", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Buscar Falta Implementar", Toast.LENGTH_LONG).show();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void actualitzaEstatXarxa() {
-        connectat3G = false;
-        connectatWifi = false;
-        //Obtenim un gestor de les connexions de xarxa
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        //Obtenim l'estat de la xarxa
-        NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
-        if (activeNetwork != null) { // connected to the internet
-            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                // connected to wifi
-                connectatWifi = activeNetwork.isConnected();
-            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                // connected to the mobile provider's data plan
-                connectat3G = activeNetwork.isConnected();
-            }
-        }
-    }
-
     //Fa servir AsyncTask per descarregar el feed XML de stackoverflow.com
     public void cargaNoticias() {
         //Si tenim connexió al dispositiu
-        if ((connectatWifi || connectat3G)) {
+        if (Util.hayConexion(this)) {
             new DownloadTask().execute(URL);
         } else {
             Toast.makeText(this, "No hi ha connexio", Toast.LENGTH_LONG).show();
@@ -250,12 +226,6 @@ public class MainActivity extends AppCompatActivity {
         db.close();
     }
 
-    public void onStart() {
-        super.onStart();
-        //Tornem a actualitzar l'estat de la xarxa
-        actualitzaEstatXarxa();
-    }
-
     protected List<Entrada> cargarDB () {
         List<Entrada> entradas = new ArrayList<>();
 
@@ -304,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         @Override
-        //Una vegada descarregada la informació XML i convertida a HTML l'enllacem al WebView
+        //Una vegada descarregada la informació XML i convertida a HTML l'enllacem al WebVisor
         protected void onPostExecute(List<Entrada> lista) {
             adapter.setList(lista);
             adapter.notifyDataSetChanged();
@@ -312,9 +282,6 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setVisibility(View.VISIBLE);
         }
 
-
-        //Mostra la cadena HTML en la UI a travs del WebView
-        //WebView myWebView = (WebView) findViewById(R.id.webView1);
-        //myWebView.loadData(result, "text/html", null);
     }
+
 }

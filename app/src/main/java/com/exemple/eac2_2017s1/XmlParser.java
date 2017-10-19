@@ -7,6 +7,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,27 +19,6 @@ public class XmlParser {
 
     // No fem servir namespaces
     private static final String ns = null;
-
-    //Aquesta classe representa una entrada de noticia del RSS Feed
-    public static class Entrada {
-        public final String titulo;
-        public final String enlace;
-        public final String autor;
-        public final String descripcion;
-        public final String fecha;
-        public final String categoria;
-        public final String imagen;
-
-        public Entrada(String titulo, String descripcion, String enlace, String autor, String fecha, String categoria, String imagen) {
-            this.titulo = titulo;
-            this.descripcion = descripcion;
-            this.enlace = enlace;
-            this.autor = autor;
-            this.fecha = fecha;
-            this.categoria = categoria;
-            this.imagen = imagen;
-        }
-    }
 
     public List<Entrada> analitza(InputStream in) throws XmlPullParserException, IOException {
         try {
@@ -56,7 +36,6 @@ public class XmlParser {
             in.close();
         }
     }
-
 
     //Llegeix una llista de noticies d'StackOverflow a partir del parser i retorna una llista d'Entrades
     private List<Entrada> leerNoticias(XmlPullParser parser) throws XmlPullParserException, IOException {
@@ -84,7 +63,6 @@ public class XmlParser {
         }
         return listaItems;
     }
-
 
     //Aquesta funció serveix per saltar-se una etiqueta i les seves subetiquetes aniuades.
     private void saltar(XmlPullParser parser) throws XmlPullParserException, IOException {
@@ -188,6 +166,27 @@ public class XmlParser {
             parser.nextTag();
         }
         return resultat;
+    }
+
+    //Aquesta classe representa una entrada de noticia del RSS Feed
+    public static class Entrada implements Serializable {
+        public final String titulo;
+        public final String enlace;
+        public final String autor;
+        public final String descripcion;
+        public final String fecha;
+        public final String categoria;
+        public final String imagen;
+
+        public Entrada(String titulo, String descripcion, String enlace, String autor, String fecha, String categoria, String imagen) {
+            this.titulo = titulo;
+            this.descripcion = descripcion;
+            this.enlace = enlace;
+            this.autor = autor;
+            this.fecha = fecha;
+            this.categoria = categoria;
+            this.imagen = imagen;
+        }
     }
 
 }

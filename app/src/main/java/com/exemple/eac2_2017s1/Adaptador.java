@@ -1,6 +1,7 @@
 package com.exemple.eac2_2017s1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,10 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,22 +64,24 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ElMeuViewHolder> {
 
     //Definim el nostre ViewHolder, és a dir, un element de la llista en qüestió
     public class ElMeuViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        //Només conté un TextView
         protected ImageView imageView;
         protected TextView vTitle;
         public ElMeuViewHolder(View v) {
             super(v);
-            //El referenciem al layout
+            //referenciem widgets al layout
             imageView = (ImageView) v.findViewById(R.id.imageView);
             vTitle = (TextView) v.findViewById(R.id.title);
-
+            //Establecemos listner
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(context,"algo", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(context, WebVisor.class);
+            intent.putExtra("item", lista.get(getAdapterPosition()));
+
+            context.startActivity(intent);
         }
 
         @Override
