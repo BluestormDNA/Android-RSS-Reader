@@ -27,7 +27,19 @@ public class WebVisor extends AppCompatActivity {
             webView.setWebViewClient(new WebViewClient());
             webView.loadUrl(item.enlace);
         } else {
-            //carga html generado al webview
+            webView.loadData(generarHtml(item), "text/html; charset=UTF-8", null);
         }
+    }
+
+    private String generarHtml(XmlParser.Entrada item) {
+        String html = "<h2>" + item.titulo + "</h2>"
+                + "<hr>"
+                + "<p>" + item.descripcion + "</p>"
+                + "<hr>"
+                + "<p style='text-align: right'><i>" + item.autor + "</i></p>"
+                + "<hr>"
+                + "<p>Categorias: " + item.categoria + "</p>"
+                + "<p>" + item.fecha + "</p>";
+        return html;
     }
 }

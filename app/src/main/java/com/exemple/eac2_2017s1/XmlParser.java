@@ -112,8 +112,8 @@ public class XmlParser {
             String etiqueta = parser.getName();
             if (etiqueta.equals("title")) { //titulo noticia
                 titulo = leerEtiqueta(parser, "title");
-            } else if (etiqueta.equals("description")) { // resumen
-                descripcion = leerEtiqueta(parser, "description");
+            } else if (etiqueta.equals("media:description")) { // resumen
+                descripcion = leerEtiqueta(parser, "media:description");
             } else if (etiqueta.equals("link")) { //enlace
                 enlace = leerEtiqueta(parser, "link");
             } else if (etiqueta.equals("pubDate")) { //fecha
