@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -91,11 +92,20 @@ public class MainActivity extends AppCompatActivity {
             return true;
             //Si se presiona la el boton buscar filtra la lista
         } else if (id == R.id.action_buscar) {
-            Toast.makeText(this, "Buscar Falta Implementar", Toast.LENGTH_LONG).show();
+            mostrarBarraBusqueda();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void mostrarBarraBusqueda() {
+        LinearLayout barraBusqueda = (LinearLayout) findViewById(R.id.barraBusqueda);
+        if (barraBusqueda.getVisibility() == View.GONE) {
+            barraBusqueda.setVisibility(View.VISIBLE);
+        } else {
+            barraBusqueda.setVisibility(View.GONE);
+        }
     }
 
     //Fa servir AsyncTask per descarregar el feed XML de stackoverflow.com
@@ -139,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Descarrega XML d'stackoverflow.com, l'analitza i crea amb ell un codi HTML que retorna com String
+    //Descarrega XML, l'analitza i crea amb ell un codi HTML que retorna com String
     private List<Entrada> carregaXMLdelaXarxa(String urlString) throws XmlPullParserException, IOException {
         List<Entrada> entradas = null;
         InputStream stream = null;
@@ -226,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
         db.close();
     }
 
-    protected List<Entrada> cargarDB () {
+    protected List<Entrada> cargarDB() {
         List<Entrada> entradas = new ArrayList<>();
 
         db.open();
@@ -246,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
         return entradas;
     }
 
-    //Implementació d'AsyncTask per descarregar el feed XML de stackoverflow.com
+    //Implementació d'AsyncTask per descarregar el feed XML
     private class DownloadTask extends AsyncTask<String, Void, List<Entrada>> {
 
         @Override
@@ -274,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         @Override
-        //Una vegada descarregada la informació XML i convertida a HTML l'enllacem al WebVisor
+        //Una vegada descarregada la informació XML i convertida a HTML l'enllacem al WebView
         protected void onPostExecute(List<Entrada> lista) {
             adapter.setList(lista);
             adapter.notifyDataSetChanged();
