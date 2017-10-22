@@ -118,10 +118,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             new DownloadTask().execute(URL);
         } else {
             Toast.makeText(this, "No hi ha connexio", Toast.LENGTH_LONG).show();
-            adapter.setList(cargarDB());
+            List<Entrada> lista = cargarDB();
+            adapter.setList(lista);
             adapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            //atualizamos el listado local para busquedas
+            listSearch = lista;
         }
     }
 
@@ -244,8 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         db.open();
         Cursor cursor = db.getAll();
-
-        cursor.moveToFirst();
+        
         while (cursor.moveToNext()) {
             String titulo = cursor.getString(cursor.getColumnIndex("titulo"));
             String enlace = cursor.getString(cursor.getColumnIndex("enlace"));
