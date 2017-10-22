@@ -69,22 +69,11 @@ public class DBInterface {
         return db.insert(TABLE_NAME ,null, initialValues);
     }
 
-/*
-    public Cursor getNoticia(long IDFila) throws SQLException {
-        Cursor mCursor = db.query(true, TABLE_NAME, new String[] {CLAU_ID, CLAU_NOM, CLAU_EMAIL}, CLAU_ID + " = " + IDFila, null, null, null, null, null);
-        if(mCursor != null) {
-            mCursor.moveToFirst();
-        }
-        return mCursor;
-    }
-*/
-    //Retorna tots els contactes TEST
-
     public Cursor getAll(){
         return db.query(TABLE_NAME, new String[] {TITULO, DESCRIPCION, ENLACE, AUTOR, FECHA, CATEGORIA, IMAGEN}, null, null, null, null, null);
     }
-//TODO Necesario
-    //
+
+    //Destruye la tabla y la rehace
     public void dropAndRecreateTable(){
         open();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);

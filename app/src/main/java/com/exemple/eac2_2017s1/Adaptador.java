@@ -62,6 +62,9 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ElMeuViewHolder> {
         this.lista = lista;
     }
 
+    public List<XmlParser.Entrada> getList(){
+        return lista;
+    }
     //Definim el nostre ViewHolder, és a dir, un element de la llista en qüestió
     public class ElMeuViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         protected ImageView imageView;

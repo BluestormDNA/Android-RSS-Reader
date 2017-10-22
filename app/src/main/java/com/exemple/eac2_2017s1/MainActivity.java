@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -30,21 +32,17 @@ import java.util.List;
 
 import static com.exemple.eac2_2017s1.XmlParser.Entrada;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // RSS FEED
     private static final String URL = "http://estaticos.marca.com/rss/portada.xml";
-    // Si existeix una connecció wifi
-    private static boolean connectatWifi = false;
-    // Si existeix una conneció 3G
-    private static boolean connectat3G = false;
 
-    //Gestion layout
+    //Inicializacion
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private Adaptador adapter;
-    //Gestion Base de datos
     private DBInterface db;
+    private List<Entrada> listSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
 
         //DB
         db = new DBInterface(this);
+        listSearch = new ArrayList<>();
+
+        //Referenciamos y añadimos listener para buscar
+        ImageButton imageButtonBusqueda = (ImageButton) findViewById(R.id.imageButtonBusqueda);
+        imageButtonBusqueda.setOnClickListener(this);
 
         //Carreguem les noticies a un fil independent fent servir AsyncTask
         cargaNoticias();
@@ -231,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             String fecha = r.fecha;
             String categoria = r.categoria;
             String imagen = r.imagen;
-            db.insert(titulo, enlace, autor, descripcion, fecha, categoria, imagen);
+            db.insert(titulo, descripcion, enlace, autor, fecha, categoria, imagen);
         }
         db.close();
     }
@@ -251,9 +254,23 @@ public class MainActivity extends AppCompatActivity {
             String fecha = cursor.getString(cursor.getColumnIndex("fecha"));
             String categoria = cursor.getString(cursor.getColumnIndex("categoria"));
             String imagen = cursor.getString(cursor.getColumnIndex("imagen"));
-            entradas.add(new Entrada(titulo, enlace, autor, descripcion, fecha, categoria, imagen));
+            entradas.add(new Entrada(titulo, descripcion, enlace, autor, fecha, categoria, imagen));
         }
         return entradas;
+    }
+
+    @Override
+    public void onClick(View v) {
+        //usa el listado local generando una nueva lista y pasandola al adaptador
+        List<Entrada> listaFiltrada = new ArrayList<>();
+        TextView editTextBusqueda = (TextView) findViewById(R.id.editTextBusqueda);
+        String busqueda = editTextBusqueda.getText().toString().toLowerCase();
+        for (Entrada e : listSearch) {
+            if (e.titulo.toLowerCase().contains(busqueda))
+                listaFiltrada.add(e);
+        }
+        adapter.setList(listaFiltrada);
+        adapter.notifyDataSetChanged();
     }
 
     //Implementació d'AsyncTask per descarregar el feed XML
@@ -290,6 +307,8 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            //atualizamos el listado local para busquedas
+            listSearch = lista;
         }
 
     }
